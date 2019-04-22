@@ -1,4 +1,4 @@
-# DLcar
+# Posenet
 This repository provides a TensorFlow implementation of the paper [PoseNet: A Convolutional Network for Real-Time 6-DOF Camera Relocalization]
 
 - The folder weight contains the pretrained GoogleNet weights that are using for training
