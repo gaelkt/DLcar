@@ -19,7 +19,7 @@ from GoogleNetwork import GoogLeNet as DNN
 
 
 ###############             Filess and Folder locations
-directory = 'datasets/KingsCollege/'   # Specify the location of the dataset
+directory = '/home/ahsan/PoseNet/datasets/KingsCollege/'   # Specify the location of the dataset
 dataset = 'dataset_train.txt'          # File containing information on training images and poses
 
 ###############                Parameters
@@ -59,13 +59,16 @@ def resizing_images(initial_image, output_side_length, cropping):
         bottom = (height + new_height)//2
         new_image = initial_image[top:bottom, left:right]
     else:
+        rescaled_height = 256
+        rescaled_width = 256
         if height > width:
-            new_height = output_side_length * height // width
+            rescaled_height = rescaled_width * height // width
         else:
-            new_width = output_side_length * width // height
-        height_offset = (new_height - output_side_length) // 2
-        width_offset = (new_width - output_side_length) // 2
-        new_image = initial_image[height_offset:height_offset + output_side_length, width_offset:width_offset + output_side_length]
+            rescaled_width = rescaled_height * width // height
+        rescaled_image = cv2.resize(initial_image, (rescaled_height,rescaled_width))
+        height_offset = (rescaled_height - output_side_length) // 2
+        width_offset = (rescaled_width - output_side_length) // 2
+        new_image = rescaled_image[height_offset:height_offset + output_side_length, width_offset:width_offset + output_side_length]
     return new_image
 
 
@@ -214,7 +217,7 @@ new_batch = generate_batch_input_data(X_train, y_train, batch_size)
 
 saver = tf.train.Saver()
 
-outputFile = "Save/Posenet.ckpt"
+outputFile = "/home/ahsan/PoseNet/Save/Posenet.ckpt"
 
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9133)
 print('Starting training')
@@ -245,8 +248,8 @@ with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
             print(' ----------------------- loss on orientation ', loss_orientation_iteration[i])
     
     saver.save(sess, outputFile)
-    scipy.io.savemat('Save/loss_position_iteration.mat', mdict={'loss_position_iteration': loss_position_iteration})
-    scipy.io.savemat('Save/loss_orientation_iteration.mat', mdict={'loss_orientation_iteration': loss_orientation_iteration})
+    scipy.io.savemat('/home/ahsan/PoseNet/Save/loss_position_iteration.mat', mdict={'loss_position_iteration': loss_position_iteration})
+    scipy.io.savemat('/home/ahsan/PoseNet/Save/loss_orientation_iteration.mat', mdict={'loss_orientation_iteration': loss_orientation_iteration})
     
 
 print('end of training')   
